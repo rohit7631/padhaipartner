@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="PadhaiPartner (padhaipartner.dpdns.org) — free study tools: word counter, GPA calculator, percentage calculator, age calculator and a Pomodoro focus timer — plus a technical setup guide, a 90-day progress tracker, and a student blog on word limits, GPA conversion, percentages and exact age. No sign-up — everything runs in your browser." />
+    <link rel="icon" href="data:," />
+    <title>PadhaiPartner — Word Counter, GPA, Percentage, Age &amp; Focus Timer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --bg:#f3f5f1;
+        --bg-soft:#e9ede5;
+        --surface:#ffffff;
+        --surface-2:#f7f8f5;
+        --ink:#1b2a21;
+        --ink-soft:#44544a;
+        --line:#d8ded2;
+        --accent:#0e6b4f;
+        --accent-strong:#09573f;
+        --accent-soft:#dcefe6;
+        --amber:#c2670a;
+        --amber-soft:#fbeed9;
+        --red:#b3372c;
+        --shadow:0 10px 30px rgba(27,42,33,.08);
+        --radius:14px;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#101613;
+          --bg-soft:#171e1a;
+          --surface:#1a221d;
+          --surface-2:#212a24;
+          --ink:#eef3ee;
+          --ink-soft:#b3c0b6;
+          --line:#33413a;
+          --accent:#3ecf9a;
+          --accent-strong:#6fe0b4;
+          --accent-soft:#1e3a2e;
+          --amber:#f0a44a;
+          --amber-soft:#3d2c14;
+          --red:#ff8a7a;
+          --shadow:0 10px 30px rgba(0,0,0,.35);
+        }
+      }
+      *{box-sizing:border-box}
+      html{scroll-behavior:smooth}
+      body{
+        margin:0;background:var(--bg);color:var(--ink);
+        font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+        font-size:16px;line-height:1.55;
+      }
+      h1,h2,h3{font-family:"Bricolage Grotesque","Manrope",sans-serif;line-height:1.12;margin:0}
+      a{color:var(--accent-strong)}
+      button{font:inherit;cursor:pointer}
+      input,select,textarea{font:inherit;color:var(--ink)}
+      .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+
+      /* ---------- top nav ---------- */
+      .topnav{
+        position:sticky;top:0;z-index:20;background:var(--bg);
+        border-bottom:1px solid var(--line);
+      }
+      .topnav .wrap{display:flex;align-items:center;gap:14px;padding-top:10px;padding-bottom:10px;overflow-x:auto;scrollbar-width:none}
+      .topnav .wrap::-webkit-scrollbar{display:none}
+      .topnav a{
+        color:var(--ink-soft);text-decoration:none;font-weight:700;font-size:.9rem;white-space:nowrap;
+        padding:6px 10px;border-radius:999px;
+      }
+      .topnav a:hover{background:var(--surface-2);color:var(--ink)}
+      .topnav a.brand{font-family:"Bricolage Grotesque",sans-serif;font-size:1.08rem;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+      .topnav a.brand span{color:var(--accent)}
+      .topnav a.cta{background:var(--accent);color:#fff;margin-left:auto}
+      .brandline{font-weight:800;font-size:.92rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-strong);margin-bottom:12px}
+      .brandline span{color:var(--ink-soft);text-transform:none;letter-spacing:0;font-weight:700}
+      @media (prefers-color-scheme: dark){.topnav a.cta{color:#0c1a13}}
+      .topnav a.cta:hover{background:var(--accent-strong)}
+      @media (max-width:640px){
+        .topnav .wrap{flex-wrap:wrap;overflow-x:visible;row-gap:2px}
+        .topnav a.cta{margin-left:0}
+      }
+
+      /* ---------- hero ---------- */
+      .hero{padding:44px 0 10px}
+      .hero h1{font-size:clamp(2rem,5.4vw,3.4rem);font-weight:800;letter-spacing:-.01em;max-width:16ch}
+      .hero h1 em{font-style:normal;color:var(--accent)}
+      .hero p{color:var(--ink-soft);font-size:1.08rem;max-width:62ch;margin:16px 0 0}
+      .hero-facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+      .fact{
+        background:var(--surface);border:1px solid var(--line);border-radius:999px;
+        padding:6px 13px;font-size:.86rem;font-weight:700;color:var(--ink-soft);
+      }
+      .fact b{color:var(--ink)}
+
+      /* ---------- tool picker cards ---------- */
+      .picker{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:28px 0 18px}
+      .pick{
+        text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+        padding:14px 14px 12px;color:var(--ink);transition:border-color .15s, transform .15s;
+      }
+      .pick:hover{transform:translateY(-2px)}
+      .pick .ic{font-size:1.35rem;display:block;margin-bottom:8px}
+      .pick .t{font-weight:800;font-size:.95rem;display:block;line-height:1.25}
+      .pick .d{color:var(--ink-soft);font-size:.8rem;display:block;margin-top:3px;line-height:1.35}
+      .pick[aria-selected="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+      @media (max-width:860px){.picker{grid-template-columns:repeat(2,1fr)}}
+      @media (max-width:420px){.picker{grid-template-columns:1fr 1fr}.pick .d{display:none}}
+
+      /* ---------- tool panel ---------- */
+      .panel{
+        background:var(--surface);border:1px solid var(--line);border-radius:18px;
+        box-shadow:var(--shadow);padding:26px;margin-bottom:14px;
+      }
+      .panel[hidden]{display:none}
+      .panel-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin-bottom:6px}
+      .panel-head h2{font-size:1.65rem;font-weight:800}
+      .panel-head .tag{background:var(--accent-soft);color:var(--accent-strong);font-size:.75rem;font-weight:800;padding:3px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
+      .panel-sub{color:var(--ink-soft);margin:0 0 20px;max-width:68ch}
+      .panel-note{color:var(--ink-soft);font-size:.95rem;border-top:1px dashed var(--line);padding-top:16px;margin-top:22px}
+      .panel-note h3{font-size:1.02rem;margin-bottom:6px}
+      .panel-note p{margin:0 0 8px}
+
+      label.flabel{display:block;font-size:.82rem;font-weight:800;color:var(--ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+      .field{
+        width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+        padding:11px 13px;outline:none;
+      }
+      .field:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+      textarea.field{min-height:190px;resize:vertical;line-height:1.6}
+      .btn{
+        border:1px solid var(--line);background:var(--surface-2);color:var(--ink);
+        border-radius:10px;padding:10px 16px;font-weight:800;font-size:.92rem;
+      }
+      .btn:hover{border-color:var(--accent)}
+      .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+      @media (prefers-color-scheme: dark){.btn.primary{color:#0c1a13}}
+      .btn.primary:hover{background:var(--accent-strong)}
+      .btn.danger:hover{border-color:var(--red);color:var(--red)}
+      .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+
+      .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+      .stat{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px}
+      .stat .num{font-family:"Bricolage Grotesque",sans-serif;font-size:1.7rem;font-weight:800;line-height:1}
+      .stat .lbl{color:var(--ink-soft);font-size:.8rem;font-weight:700;margin-top:5px}
+      @media (max-width:700px){.statgrid{grid-template-columns:repeat(2,1fr)}}
+
+      .goalrow{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-top:18px}
+      .goalrow .grow{flex:1;min-width:170px}
+      .progress{height:10px;background:var(--bg-soft);border-radius:99px;overflow:hidden;margin-top:8px}
+      .progress > div{height:100%;background:var(--accent);width:0%;transition:width .25s}
+      .freq{margin-top:14px;color:var(--ink-soft);font-size:.92rem}
+      .freq b{color:var(--ink)}
+      .chip{display:inline-block;background:var(--amber-soft);color:var(--amber);border-radius:999px;padding:2px 10px;font-weight:800;font-size:.82rem;margin:2px 3px 2px 0}
+
+      /* GPA rows */
+      .gpa-head,.gpa-row{display:grid;grid-template-columns:1fr 130px 110px 42px;gap:10px;align-items:center}
+      .gpa-head{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);padding:0 2px 6px}
+      .gpa-row{margin-bottom:10px}
+      .gpa-row .del{height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-soft);font-size:1.05rem}
+      .gpa-row .del:hover{color:var(--red);border-color:var(--red)}
+      @media (max-width:640px){
+        .gpa-head{display:none}
+        .gpa-row{grid-template-columns:1fr 42px;grid-template-areas:"name del" "grade del" "credits del"}
+        .gpa-row .f-name{grid-area:name}.gpa-row .f-grade{grid-area:grade}
+        .gpa-row .f-credits{grid-area:credits}.gpa-row .del{grid-area:del;height:100%}
+      }
+      .bigresult{
+        display:flex;flex-wrap:wrap;gap:18px;align-items:center;background:var(--accent-soft);
+        border-radius:14px;padding:18px 20px;margin-top:20px;
+      }
+      .bigresult .score{font-family:"Bricolage Grotesque",sans-serif;font-size:2.6rem;font-weight:800;line-height:1;color:var(--accent-strong)}
+      .bigresult .meta{color:var(--ink-soft);font-size:.94rem}
+      .bigresult .meta b{color:var(--ink)}
+      .split{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+      @media (max-width:760px){.split{grid-template-columns:1fr}}
+      .subbox{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--surface-2)}
+      .subbox h3{font-size:1.08rem;margin-bottom:4px}
+      .subbox p.hint{color:var(--ink-soft);font-size:.9rem;margin:0 0 14px}
+      .subbox .out{font-size:1.35rem;font-weight:800;margin-top:12px}
+      .subbox .out small{display:block;font-size:.85rem;color:var(--ink-soft);font-weight:600;margin-top:2px}
+      .twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      .error{color:var(--red);font-weight:700;font-size:.92rem;margin-top:10px;min-height:1.2em}
+
+      /* timer */
+      .timer-flex{display:flex;gap:28px;flex-wrap:wrap;align-items:center}
+      .dial{position:relative;width:220px;height:220px;flex:none;margin:0 auto}
+      .dial svg{transform:rotate(-90deg)}
+      .dial .track{stroke:var(--bg-soft)}
+      .dial .prog{stroke:var(--accent);transition:stroke-dashoffset .3s linear}
+      .dial .time{
+        position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      }
+      .dial .time .clock{font-family:"Bricolage Grotesque",sans-serif;font-size:3rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+      .dial .time .mode{color:var(--ink-soft);font-weight:800;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+      .timer-controls{flex:1;min-width:250px}
+      .seg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+      .seg button{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:8px 15px;font-weight:800;font-size:.88rem;color:var(--ink)}
+      .seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+      @media (prefers-color-scheme: dark){.seg button[aria-pressed="true"]{color:#0c1a13}}
+
+      /* ---------- info sections ---------- */
+      .section{padding:34px 0 6px}
+      .section h2{font-size:1.7rem;font-weight:800;margin-bottom:10px}
+      .section p{color:var(--ink-soft);max-width:72ch}
+      .faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+      .faq summary{font-weight:800;cursor:pointer}
+      .faq details p{margin:8px 0 2px}
+      .policy-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+      @media (max-width:760px){.policy-grid{grid-template-columns:1fr}}
+      .policy{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+      .policy h3{font-size:1.1rem;margin-bottom:8px}
+      .policy p,.policy li{color:var(--ink-soft);font-size:.94rem}
+      .policy ul{margin:6px 0;padding-left:20px}
+      footer{border-top:1px solid var(--line);margin-top:44px;padding:22px 0 34px}
+      footer .wrap{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center}
+      footer a{color:var(--ink-soft);text-decoration:none;font-weight:700;font-size:.9rem}
+      footer a:hover{color:var(--ink)}
+      footer .fine{color:var(--ink-soft);font-size:.85rem;width:100%}
+
+      /* ---------- setup guide ---------- */
+      .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 20px}
+      @media (max-width:860px){.timeline{grid-template-columns:repeat(2,1fr)}}
+      @media (max-width:480px){.timeline{grid-template-columns:1fr}}
+      .phase{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+      .phase .when{font-size:.78rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-strong)}
+      .phase h3{font-size:1rem;margin:6px 0 5px}
+      .phase p{font-size:.9rem;margin:0}
+      .phase.done{border-color:var(--accent)}
+      .phase.now{border-color:var(--amber);background:var(--amber-soft)}
+      .phase.now p,.phase.now h3{color:var(--ink)}
+      .setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+      @media (max-width:760px){.setup-grid{grid-template-columns:1fr}}
+      .setup-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+      .setup-card h3{font-size:1.08rem;margin-bottom:6px}
+      .setup-card p,.setup-card li{color:var(--ink-soft);font-size:.94rem}
+      .setup-card ul{margin:8px 0;padding-left:20px}
+      .setup-card li{margin-bottom:5px}
+      .checklist{list-style:none;margin:10px 0 0;padding:0}
+      .checklist li{position:relative;padding:8px 0 8px 30px;border-top:1px dashed var(--line);color:var(--ink-soft);font-size:.94rem}
+      .checklist li:first-child{border-top:none}
+      .checklist li::before{content:"✓";position:absolute;left:0;top:7px;width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:var(--accent-strong);font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center}
+      .checklist li.todo::before{content:"○";background:var(--surface-2);color:var(--ink-soft)}
+      .codeblock{background:var(--ink);color:#e8f2ea;border-radius:12px;padding:16px 18px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.83rem;line-height:1.6;overflow-x:auto;white-space:pre;margin:12px 0 0}
+      @media (prefers-color-scheme: dark){.codeblock{background:#0a0f0c;color:#cfe8d8}}
+      .placeholder-note{background:var(--amber-soft);border-radius:10px;padding:12px 14px;font-size:.9rem;color:var(--ink);margin-top:14px}
+      .placeholder-note b{color:var(--amber)}
+
+      /* ---------- 90-day progress tracker ---------- */
+      .timeline.five{grid-template-columns:repeat(5,1fr)}
+      @media (max-width:980px){.timeline.five{grid-template-columns:repeat(2,1fr)}}
+      @media (max-width:480px){.timeline.five{grid-template-columns:1fr}}
+      .phase .status{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 10px;margin-bottom:8px}
+      .phase .status.st-done{background:var(--accent-soft);color:var(--accent-strong)}
+      .phase .status.st-now{background:var(--amber);color:#fff}
+      @media (prefers-color-scheme: dark){.phase .status.st-now{color:#241503}}
+      .phase .status.st-todo{background:var(--surface-2);color:var(--ink-soft);border:1px dashed var(--line)}
+      .phase.notyet{border-style:dashed}
+      .segbar{display:flex;gap:6px;margin:4px 0 18px}
+      .segbar span{height:10px;flex:1;border-radius:99px;background:var(--bg-soft);border:1px solid var(--line)}
+      .segbar span.filled{background:var(--accent);border-color:var(--accent)}
+      .segbar span.current{background:var(--amber);border-color:var(--amber)}
+      .segbar-label{color:var(--ink-soft);font-size:.9rem;margin:0 0 20px}
+      .adsense-note{background:var(--amber-soft);border:1px solid var(--amber);border-radius:14px;padding:18px 20px;margin-top:6px}
+      .adsense-note h3{font-size:1.12rem;margin-bottom:6px;color:var(--ink)}
+      .adsense-note p{color:var(--ink);margin:0 0 8px;max-width:78ch}
+      .adsense-note p:last-child{margin-bottom:0}
+      .adsense-note ul{margin:6px 0 8px;padding-left:20px;color:var(--ink)}
+      .adsense-note li{margin-bottom:4px}
+
+      /* ---------- blog ---------- */
+      .blog-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px}
+      @media (max-width:760px){.blog-grid{grid-template-columns:1fr}}
+      .blog-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;text-decoration:none;color:var(--ink);display:block}
+      .blog-card:hover{border-color:var(--accent)}
+      .blog-card .meta{font-size:.8rem;font-weight:800;color:var(--accent-strong);text-transform:uppercase;letter-spacing:.05em}
+      .blog-card h3{font-size:1.2rem;margin:8px 0 6px;line-height:1.25}
+      .blog-card p{font-size:.94rem;margin:0}
+      .blog-card .read{font-weight:800;color:var(--accent-strong);font-size:.9rem;display:inline-block;margin-top:12px}
+      article.post{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;margin-top:16px}
+      article.post .meta{font-size:.82rem;font-weight:800;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em}
+      article.post h3{font-size:1.55rem;line-height:1.2;margin:8px 0 10px;max-width:28ch}
+      article.post h4{font-size:1.05rem;margin:20px 0 6px}
+      article.post p,article.post li{color:var(--ink-soft)}
+      article.post p{max-width:72ch}
+      article.post ul,article.post ol{max-width:72ch;padding-left:22px}
+      article.post li{margin-bottom:6px}
+      article.post .tool-cta{background:var(--accent-soft);border-radius:12px;padding:14px 16px;margin-top:18px}
+      article.post .tool-cta p{color:var(--ink);margin:0;font-size:.95rem}
+      @media (max-width:640px){article.post{padding:20px}}
+
+      .toast{
+        position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);
+        background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:800;font-size:.9rem;
+        opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;z-index:50;
+      }
+      .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+      @media (prefers-reduced-motion: reduce){
+        html{scroll-behavior:auto}
+        *{transition:none !important}
+      }
+    </style>
+  </head>
+  <body>
+
+    <nav class="topnav" aria-label="Site">
+      <div class="wrap">
+        <a class="brand" href="#tools">Padhai<span>Partner</span></a>
+        <a href="#tools">All tools</a>
+        <a href="#about">About</a>
+        <a href="#progress">Progress</a>
+        <a href="#setup">Setup Guide</a>
+        <a href="#blog">Blog</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+        <a href="#privacy">Privacy Policy</a>
+        <a href="#terms">Terms</a>
+        <a class="cta" href="#tools" data-goto="word">Start with Word Counter</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <div class="brandline">PadhaiPartner <span>· padhaipartner.dpdns.org · free study tools for students</span></div>
+        <h1>Small tools that save <em>study time</em>, every single day.</h1>
+        <p>Five free tools for students — count words in an essay, work out your GPA, check percentages, calculate your exact age, and study in focused Pomodoro sessions. No sign-up, no uploads: everything runs right here in your browser.</p>
+        <div class="hero-facts">
+          <span class="fact"><b>5</b> free tools</span>
+          <span class="fact"><b>0</b> sign-ups</span>
+          <span class="fact">Results update <b>as you type</b></span>
+          <span class="fact">Your text <b>never leaves</b> this page</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap" id="tools">
+
+      <!-- Picker -->
+      <div class="picker" role="tablist" aria-label="Choose a tool">
+        <button class="pick" role="tab" data-tool="word" aria-selected="true">
+          <span class="ic" aria-hidden="true">✍️</span>
+          <span class="t">Word Counter</span>
+          <span class="d">Words, characters, reading time &amp; essay goal</span>
+        </button>
+        <button class="pick" role="tab" data-tool="gpa" aria-selected="false">
+          <span class="ic" aria-hidden="true">🎓</span>
+          <span class="t">GPA Calculator</span>
+          <span class="d">Semester GPA + CGPA ⇄ percentage</span>
+        </button>
+        <button class="pick" role="tab" data-tool="percent" aria-selected="false">
+          <span class="ic" aria-hidden="true">%</span>
+          <span class="t">Percentage Calculator</span>
+          <span class="d">Marks %, % of a number, % change</span>
+        </button>
+        <button class="pick" role="tab" data-tool="age" aria-selected="false">
+          <span class="ic" aria-hidden="true">🎂</span>
+          <span class="t">Age Calculator</span>
+          <span class="d">Exact age in years, months &amp; days</span>
+        </button>
+        <button class="pick" role="tab" data-tool="timer" aria-selected="false">
+          <span class="ic" aria-hidden="true">⏱️</span>
+          <span class="t">Focus Timer</span>
+          <span class="d">Pomodoro sessions with breaks</span>
+        </button>
+      </div>
+
+      <!-- ============ WORD COUNTER ============ -->
+      <section class="panel" id="panel-word" role="tabpanel" aria-label="Word Counter">
+        <div class="panel-head"><h2>Word Counter</h2><span class="tag">Tool 1</span></div>
+        <p class="panel-sub">Paste or type your essay, assignment or answer below. Counts update instantly — including reading time, speaking time and your most repeated words.</p>
+
+        <label class="flabel" for="wc-text">Your text</label>
+        <textarea class="field" id="wc-text" placeholder="Start typing, or paste your essay, assignment or speech here…"></textarea>
+
+        <div class="statgrid" aria-live="polite">
+          <div class="stat"><div class="num" id="wc-words">0</div><div class="lbl">Words</div></div>
+          <div class="stat"><div class="num" id="wc-chars">0</div><div class="lbl">Characters</div></div>
+          <div class="stat"><div class="num" id="wc-nospaces">0</div><div class="lbl">Characters (no spaces)</div></div>
+          <div class="stat"><div class="num" id="wc-sentences">0</div><div class="lbl">Sentences</div></div>
+          <div class="stat"><div class="num" id="wc-paras">0</div><div class="lbl">Paragraphs</div></div>
+          <div class="stat"><div class="num" id="wc-read">0 sec</div><div class="lbl">Reading time (~200 wpm)</div></div>
+          <div class="stat"><div class="num" id="wc-speak">0 sec</div><div class="lbl">Speaking time (~130 wpm)</div></div>
+          <div class="stat"><div class="num" id="wc-avg">0</div><div class="lbl">Avg. words per sentence</div></div>
+        </div>
+
+        <div class="goalrow">
+          <div class="grow">
+            <label class="flabel" for="wc-goal">Word goal (e.g. essay limit)</label>
+            <input class="field" id="wc-goal" type="number" min="1" placeholder="500" />
+            <div class="progress" aria-hidden="true"><div id="wc-progress"></div></div>
+          </div>
+          <div class="freq" id="wc-goaltext">Set a goal to track your progress.</div>
+        </div>
+
+        <p class="freq" id="wc-freq">Your most repeated words will appear here.</p>
+
+        <div class="btnrow">
+          <button class="btn primary" id="wc-copy" type="button">Copy text</button>
+          <button class="btn danger" id="wc-clear" type="button">Clear</button>
+        </div>
+
+        <div class="panel-note">
+          <h3>How the counts work</h3>
+          <p>A <b>word</b> is any run of letters or numbers separated by spaces — “well-known” counts as one word, and so does a number like 2026. <b>Sentences</b> end with a full stop, question mark or exclamation mark. <b>Reading time</b> assumes an average adult speed of 200 words per minute; speaking time assumes 130 words per minute, which is typical for a presentation or speech.</p>
+          <p>Teachers and examiners often set word limits — use the goal tracker above to see at a glance whether your essay is under, at, or over the limit.</p>
+        </div>
+      </section>
+
+      <!-- ============ GPA ============ -->
+      <section class="panel" id="panel-gpa" role="tabpanel" aria-label="GPA Calculator" hidden>
+        <div class="panel-head"><h2>GPA Calculator</h2><span class="tag">Tool 2</span></div>
+        <p class="panel-sub">Enter each subject, its letter grade and its credit hours. Your GPA on the standard 4.0 scale updates as you type.</p>
+
+        <div class="gpa-head" aria-hidden="true"><span>Subject (optional)</span><span>Grade</span><span>Credits</span><span></span></div>
+        <div id="gpa-rows"></div>
+
+        <div class="btnrow">
+          <button class="btn primary" id="gpa-add" type="button">+ Add subject</button>
+          <button class="btn" id="gpa-reset" type="button">Reset</button>
+        </div>
+
+        <div class="bigresult" aria-live="polite">
+          <div class="score" id="gpa-score">0.00</div>
+          <div class="meta">
+            <div><b id="gpa-letter">—</b> grade average</div>
+            <div><b id="gpa-credits">0</b> total credits · <b id="gpa-points">0.0</b> quality points</div>
+          </div>
+        </div>
+
+        <div class="split" style="margin-top:22px">
+          <div class="subbox">
+            <h3>CGPA → Percentage</h3>
+            <p class="hint">The common conversion used by Indian universities: Percentage = CGPA × 9.5</p>
+            <label class="flabel" for="cgpa-in">CGPA (out of 10)</label>
+            <input class="field" id="cgpa-in" type="number" step="0.01" min="0" max="10" placeholder="e.g. 8.4" />
+            <div class="out" id="cgpa-out">—<small>Enter a CGPA to see the percentage</small></div>
+          </div>
+          <div class="subbox">
+            <h3>Percentage → CGPA</h3>
+            <p class="hint">Reverse conversion: CGPA = Percentage ÷ 9.5</p>
+            <label class="flabel" for="pct-in">Percentage (%)</label>
+            <input class="field" id="pct-in" type="number" step="0.1" min="0" max="100" placeholder="e.g. 79.8" />
+            <div class="out" id="pct-out">—<small>Enter a percentage to see the CGPA</small></div>
+          </div>
+        </div>
+
+        <div class="panel-note">
+          <h3>How GPA is calculated</h3>
+          <p>Each grade is worth grade points (A+ and A = 4.0, A− = 3.7, B+ = 3.3, B = 3.0, B− = 2.7, C+ = 2.3, C = 2.0, C− = 1.7, D+ = 1.3, D = 1.0, F = 0). Multiply each subject's points by its credits, add them up, and divide by total credits. Subjects with more credits pull your GPA more — that's why a low grade in a 4-credit subject hurts more than in a 1-credit one.</p>
+          <p>The × 9.5 CGPA formula is the one CBSE and many Indian universities publish, but your institution's exact rule always wins — check your handbook before quoting a converted figure anywhere official.</p>
+        </div>
+      </section>
+
+      <!-- ============ PERCENTAGE ============ -->
+      <section class="panel" id="panel-percent" role="tabpanel" aria-label="Percentage Calculator" hidden>
+        <div class="panel-head"><h2>Percentage Calculator</h2><span class="tag">Tool 3</span></div>
+        <p class="panel-sub">The three percentage questions students actually get — marks scored, percent of a number, and percentage change. Each one calculates on its own as you type.</p>
+
+        <div class="split">
+          <div class="subbox">
+            <h3>1 · Marks percentage</h3>
+            <p class="hint">What percentage did you score?</p>
+            <div class="twocol">
+              <div><label class="flabel" for="pc-scored">Marks scored</label><input class="field" id="pc-scored" type="number" min="0" step="any" placeholder="450" /></div>
+              <div><label class="flabel" for="pc-total">Out of (total)</label><input class="field" id="pc-total" type="number" min="0" step="any" placeholder="500" /></div>
+            </div>
+            <div class="out" id="pc-marks-out">—<small>scored ÷ total × 100</small></div>
+          </div>
+
+          <div class="subbox">
+            <h3>2 · Percent of a number</h3>
+            <p class="hint">What is X% of Y? Handy for discounts and portions.</p>
+            <div class="twocol">
+              <div><label class="flabel" for="pc-pct">Percent (%)</label><input class="field" id="pc-pct" type="number" step="any" placeholder="15" /></div>
+              <div><label class="flabel" for="pc-of">Of number</label><input class="field" id="pc-of" type="number" step="any" placeholder="2400" /></div>
+            </div>
+            <div class="out" id="pc-of-out">—<small>percent ÷ 100 × number</small></div>
+          </div>
+
+          <div class="subbox">
+            <h3>3 · Percentage change</h3>
+            <p class="hint">How much did a value rise or fall, in percent?</p>
+            <div class="twocol">
+              <div><label class="flabel" for="pc-old">Old value</label><input class="field" id="pc-old" type="number" step="any" placeholder="60" /></div>
+              <div><label class="flabel" for="pc-new">New value</label><input class="field" id="pc-new" type="number" step="any" placeholder="75" /></div>
+            </div>
+            <div class="out" id="pc-change-out">—<small>(new − old) ÷ old × 100</small></div>
+          </div>
+
+          <div class="subbox">
+            <h3>Quick reference</h3>
+            <p class="hint">Fractions you'll meet again and again:</p>
+            <p style="margin:0;color:var(--ink-soft);font-size:.95rem">
+              ½ = <b>50%</b> · ¼ = <b>25%</b> · ¾ = <b>75%</b> · ⅓ ≈ <b>33.33%</b> · ⅕ = <b>20%</b> · ⅛ = <b>12.5%</b> · 1⁄10 = <b>10%</b>
+            </p>
+          </div>
+        </div>
+
+        <div class="panel-note">
+          <h3>The one idea behind all three</h3>
+          <p>“Percent” means <b>per hundred</b>. Every percentage problem is just a part, a whole, and a ratio scaled to 100: percentage = (part ÷ whole) × 100. Marks, discounts, population growth and exam cut-offs all use the same formula — only the labels change.</p>
+        </div>
+      </section>
+
+      <!-- ============ AGE ============ -->
+      <section class="panel" id="panel-age" role="tabpanel" aria-label="Age Calculator" hidden>
+        <div class="panel-head"><h2>Age Calculator</h2><span class="tag">Tool 4</span></div>
+        <p class="panel-sub">Your exact age — years, months and days — plus total days lived and a countdown to your next birthday. Useful for forms, eligibility cut-offs and exam applications.</p>
+
+        <div class="twocol" style="max-width:640px">
+          <div><label class="flabel" for="age-dob">Date of birth</label><input class="field" id="age-dob" type="date" /></div>
+          <div><label class="flabel" for="age-asof">Age as of</label><input class="field" id="age-asof" type="date" /></div>
+        </div>
+        <p class="error" id="age-error" role="alert"></p>
+
+        <div class="statgrid" aria-live="polite">
+          <div class="stat"><div class="num" id="age-years">–</div><div class="lbl">Years</div></div>
+          <div class="stat"><div class="num" id="age-months">–</div><div class="lbl">Months</div></div>
+          <div class="stat"><div class="num" id="age-days">–</div><div class="lbl">Days</div></div>
+          <div class="stat"><div class="num" id="age-total">–</div><div class="lbl">Total days lived</div></div>
+          <div class="stat"><div class="num" id="age-weeks">–</div><div class="lbl">Total weeks</div></div>
+          <div class="stat"><div class="num" id="age-next">–</div><div class="lbl">Days to next birthday</div></div>
+          <div class="stat"><div class="num" id="age-weekday">–</div><div class="lbl">Born on a</div></div>
+          <div class="stat"><div class="num" id="age-turns">–</div><div class="lbl">You turn (next birthday)</div></div>
+        </div>
+
+        <div class="panel-note">
+          <h3>Why “as of” date matters</h3>
+          <p>Many exams and government forms fix eligibility on a specific cut-off date — “age as on 1 January” is common. Set the <b>Age as of</b> field to that cut-off date instead of today, and the years-months-days result is the exact figure the form is asking for. The calculation counts completed years, then completed months, then remaining days — the same method used on official forms.</p>
+        </div>
+      </section>
+
+      <!-- ============ TIMER ============ -->
+      <section class="panel" id="panel-timer" role="tabpanel" aria-label="Focus Timer" hidden>
+        <div class="panel-head"><h2>Focus Timer</h2><span class="tag">Tool 5</span></div>
+        <p class="panel-sub">Study in focused Pomodoro sessions: work until the timer rings, take a short break, repeat. Four sessions make one full round.</p>
+
+        <div class="timer-flex">
+          <div class="dial" aria-live="polite">
+            <svg width="220" height="220" viewBox="0 0 220 220" aria-hidden="true">
+              <circle class="track" cx="110" cy="110" r="96" fill="none" stroke-width="12" />
+              <circle class="prog" id="tm-ring" cx="110" cy="110" r="96" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="603.2" stroke-dashoffset="0" />
+            </svg>
+            <div class="time">
+              <div class="clock" id="tm-clock">25:00</div>
+              <div class="mode" id="tm-mode">Focus</div>
+            </div>
+          </div>
+
+          <div class="timer-controls">
+            <label class="flabel">Session type</label>
+            <div class="seg" role="group" aria-label="Session type">
+              <button type="button" id="tm-focus-btn" aria-pressed="true">Focus</button>
+              <button type="button" id="tm-break-btn" aria-pressed="false">Break</button>
+            </div>
+            <label class="flabel">Length</label>
+            <div class="seg" role="group" aria-label="Session length">
+              <button type="button" data-mins="15">15 min</button>
+              <button type="button" data-mins="25" aria-pressed="true">25 min</button>
+              <button type="button" data-mins="45">45 min</button>
+              <button type="button" data-mins="50">50 min</button>
+            </div>
+            <div style="max-width:220px;margin-bottom:16px">
+              <label class="flabel" for="tm-custom">Custom minutes</label>
+              <input class="field" id="tm-custom" type="number" min="1" max="180" placeholder="e.g. 30" />
+            </div>
+            <div class="btnrow" style="margin-top:0">
+              <button class="btn primary" id="tm-toggle" type="button">Start</button>
+              <button class="btn" id="tm-reset" type="button">Reset</button>
+            </div>
+            <p style="color:var(--ink-soft);margin:14px 0 0">Completed focus sessions this visit: <b id="tm-done" style="color:var(--ink)">0</b></p>
+          </div>
+        </div>
+
+        <div class="panel-note">
+          <h3>How the Pomodoro technique works</h3>
+          <p>The classic pattern is <b>25 minutes of focused work, then a 5-minute break</b>, repeated four times before a longer 15–30 minute break. It works because the commitment is small — anyone can focus for 25 minutes — and the regular breaks stop the mental fatigue that makes long, unbroken study sessions unproductive. During a focus session, keep your phone in another room and write down distracting thoughts instead of acting on them; deal with the list in your break.</p>
+        </div>
+      </section>
+
+      <!-- About -->
+      <section class="section" id="about">
+        <h2>About PadhaiPartner</h2>
+        <p>PadhaiPartner is a small, free collection of calculators and utilities built for students — the kind of quick jobs that come up every week: checking whether an essay meets its word limit, estimating a semester GPA before results day, converting CGPA to percentage for an application form, confirming your exact age on an exam cut-off date, or simply sitting down and focusing for 25 minutes.</p>
+        <p>Every tool on this page runs entirely in your browser. Nothing you type — your essay text, your grades, your date of birth — is uploaded, stored or shared. Close the tab and it's gone.</p>
+      </section>
+
+      <!-- 90-day plan: Progress Tracker (Days 46–75 content phase) -->
+      <section class="section" id="progress">
+        <h2>90-day progress tracker</h2>
+        <p>This site is being built by following the guide's 90-day plan <b style="color:var(--ink)">in order</b> — research first, then the build, then technical setup, then a steady content phase, and only at the end a review of whether the site is ready for AdSense. The first three phases are complete. The site is now in the <b style="color:var(--ink)">Days 46–75 content phase</b>: publishing original supporting blogs for the tools, 1–2 a week.</p>
+
+        <div class="segbar" aria-hidden="true"><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="current"></span><span></span></div>
+        <p class="segbar-label"><b style="color:var(--ink)">3 of 5 phases done</b> · 1 in progress · 1 not yet started</p>
+
+        <div class="timeline five" aria-label="90-day plan progress">
+          <div class="phase done">
+            <span class="status st-done">✓ Done</span>
+            <div class="when">Days 1–14</div>
+            <h3>Research</h3>
+            <p>One niche chosen (study tools for students) and low-competition tool keywords researched before anything was built — the guide's rule that a new site should only target topics it can realistically rank for.</p>
+          </div>
+          <div class="phase done">
+            <span class="status st-done">✓ Done</span>
+            <div class="when">Days 15–30</div>
+            <h3>Build + legal pages</h3>
+            <p>The five tools built and working, with the trust pages AdSense review looks for: About, Contact, Privacy Policy, Terms &amp; Disclaimer — all live on this page.</p>
+          </div>
+          <div class="phase done">
+            <span class="status st-done">✓ Done</span>
+            <div class="when">Days 31–45</div>
+            <h3>Technical setup + first blogs</h3>
+            <p>The <a href="#setup">technical setup guide</a> completed — domain, hosting, SSL, sitemap, robots.txt, Search Console and Analytics steps, with copy-ready robots.txt and sitemap.xml templates — and the first two supporting blogs published (Word Counter and GPA Calculator).</p>
+          </div>
+          <div class="phase now">
+            <span class="status st-now">● In progress</span>
+            <div class="when">Days 46–75</div>
+            <h3>Content phase</h3>
+            <p>Original supporting blogs, 1–2 a week, each answering a real student question and linking back to its tool. This phase adds two new posts — for the <a href="#post-percentage">Percentage Calculator</a> and the <a href="#post-age">Age Calculator</a> — taking the blog to four posts, with more to follow through Day 75.</p>
+          </div>
+          <div class="phase notyet">
+            <span class="status st-todo">○ Not yet done</span>
+            <div class="when">Days 76–90</div>
+            <h3>Review</h3>
+            <p>Check indexing and real search traffic in Search Console, work through the AdSense readiness checklist in the <a href="#setup">setup guide</a>, fix anything flagged — and only then decide whether to apply.</p>
+          </div>
+        </div>
+
+        <div class="adsense-note" role="note">
+          <h3>⚠ Do NOT apply for AdSense yet</h3>
+          <p>Applying now would be applying too early. Three things the guide requires before an application <b>do not exist yet</b>:</p>
+          <ul>
+            <li><b>Not yet published on the domain</b> — the domain padhaipartner.dpdns.org is now registered (through DigitalPlat Domain, created 2026-10-29, expiring 2027-10-29), but this site still has to be put live on it with hosting and https.</li>
+            <li><b>No indexing</b> — until the site is live on padhaipartner.dpdns.org there is no Search Console property, no submitted sitemap, and no page indexed by Google.</li>
+            <li><b>No steady organic traffic</b> — there are not yet a few weeks of real visitors arriving from Google search to measure.</li>
+          </ul>
+          <p>The application belongs in the <b>Days 76–90 review phase</b>, and only if that review shows all three in place. An AdSense account is also the site owner's own Google account — none has been created or applied for here.</p>
+        </div>
+      </section>
+
+      <!-- Step 2: Technical Setup Guide -->
+      <section class="section" id="setup">
+        <h2>Technical setup guide — Step 2</h2>
+        <p>This guide was completed in the Days 31–45 phase of the 90-day plan (see the <a href="#progress">progress tracker</a> above for where the plan stands now). It stays here as the working reference for what to do when this page is put on your own domain and hosting.</p>
+        <p><b style="color:var(--ink)">Domain registered: padhaipartner.dpdns.org — the domain step is now done.</b> Per the site owner's domain certificate, the domain is registered through <b style="color:var(--ink)">DigitalPlat Domain</b>, created <b style="color:var(--ink)">2026-10-29</b> and expiring <b style="color:var(--ink)">2027-10-29</b>. It is the domain used in the site's branding and in the templates below. <b style="color:var(--ink)">No contact email address and no AdSense account has been created for this domain.</b></p>
+
+        <div class="setup-grid">
+          <div class="setup-card">
+            <h3>1 · Domain, hosting &amp; SSL</h3>
+            <ul>
+              <li><b>Domain:</b> <b>padhaipartner.dpdns.org</b> — registered through DigitalPlat Domain (created 2026-10-29, expires 2027-10-29, per the domain certificate). This step is done; the domain is your property record for AdSense later.</li>
+              <li><b>Hosting:</b> choose fast, reliable hosting with good mobile speed. These tools are a single lightweight page, so even a basic plan is enough — speed matters more than size.</li>
+              <li><b>SSL (https):</b> turn on the free SSL certificate in your hosting panel and force https. Search Console, browsers and AdSense review all expect https.</li>
+              <li><b>Put this page live</b> as the homepage, then check every tool once on a phone and once on a computer before moving on.</li>
+            </ul>
+            <ul class="checklist">
+              <li>Domain registered in the site owner's name (padhaipartner.dpdns.org — DigitalPlat Domain, created 2026-10-29, expires 2027-10-29)</li>
+              <li class="todo">Hosting live and page loads on mobile data</li>
+              <li class="todo">https works and http redirects to https</li>
+            </ul>
+          </div>
+
+          <div class="setup-card">
+            <h3>2 · Sitemap &amp; robots.txt</h3>
+            <p>These two small files tell Google what exists and what it may crawl. Put both in the root of your domain (the same folder as the homepage).</p>
+            <p style="margin-bottom:0"><b style="color:var(--ink)">robots.txt</b> — copy this exactly; it already uses the registered domain, padhaipartner.dpdns.org:</p>
+            <div class="codeblock" id="robots-code">User-agent: *
+Allow: /
+
+Sitemap: https://padhaipartner.dpdns.org/sitemap.xml</div>
+            <div class="btnrow"><button class="btn" type="button" id="copy-robots">Copy robots.txt</button><button class="btn" type="button" id="dl-robots">Download robots.txt</button></div>
+            <p style="margin-bottom:0"><b style="color:var(--ink)">sitemap.xml</b> — one entry per page or section. For this single-page site, list the homepage plus its main sections:</p>
+            <div class="codeblock" id="sitemap-code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;url&gt;&lt;loc&gt;https://padhaipartner.dpdns.org/&lt;/loc&gt;&lt;/url&gt;
+  &lt;url&gt;&lt;loc&gt;https://padhaipartner.dpdns.org/#about&lt;/loc&gt;&lt;/url&gt;
+  &lt;url&gt;&lt;loc&gt;https://padhaipartner.dpdns.org/#progress&lt;/loc&gt;&lt;/url&gt;
+  &lt;url&gt;&lt;loc&gt;https://padhaipartner.dpdns.org/#setup&lt;/loc&gt;&lt;/url&gt;
+  &lt;url&gt;&lt;loc&gt;https://padhaipartner.dpdns.org/#blog&lt;/loc&gt;&lt;/url&gt;
+  &lt;url&gt;&lt;loc&gt;https://padhaipartner.dpdns.org/#privacy&lt;/loc&gt;&lt;/url&gt;
+  &lt;url&gt;&lt;loc&gt;https://padhaipartner.dpdns.org/#terms&lt;/loc&gt;&lt;/url&gt;
+&lt;/urlset&gt;</div>
+            <div class="btnrow"><button class="btn" type="button" id="dl-sitemap">Download sitemap.xml template</button></div>
+            <div class="placeholder-note"><b>Before uploading:</b> these templates use the registered domain, <b>padhaipartner.dpdns.org</b> (DigitalPlat Domain, created 2026-10-29, expires 2027-10-29). Upload the files once the site is live on that domain, and check the sitemap opens in a browser without an error.</div>
+          </div>
+
+          <div class="setup-card">
+            <h3>3 · Google Search Console</h3>
+            <ul>
+              <li>Open Search Console with the same Google account you will later use for AdSense, and add your domain as a <b>Domain property</b>.</li>
+              <li>Verify ownership with the DNS record Google gives you — add it in your domain/hosting panel exactly as shown.</li>
+              <li>Go to <b>Sitemaps</b> and submit <b>sitemap.xml</b>. Status should turn to “Success”.</li>
+              <li>Use <b>URL Inspection → Request Indexing</b> for the homepage. Then wait — indexing takes days, not minutes.</li>
+              <li>Check the <b>Pages</b> report weekly. Fix “Crawled — currently not indexed” or mobile-usability issues if they appear.</li>
+            </ul>
+          </div>
+
+          <div class="setup-card">
+            <h3>4 · Google Analytics &amp; speed check</h3>
+            <ul>
+              <li>Create a Google Analytics property for the same domain and add its measurement tag to this page, just before the closing <b>&lt;/head&gt;</b> tag. Do not add any tag before the property exists — there is no placeholder ID.</li>
+              <li>Confirm your own visit appears in Analytics <b>Realtime</b>. That proves the tag is firing.</li>
+              <li>Run the live URL through PageSpeed Insights. Aim for a green mobile score: this page has no heavy images or libraries, so a slow score usually points to hosting, not the page.</li>
+              <li>Keep Search Console (search traffic) and Analytics (visitor behaviour) separate — you need both before judging whether the site is ready for AdSense.</li>
+            </ul>
+          </div>
+
+          <div class="setup-card">
+            <h3>5 · Before you apply for AdSense</h3>
+            <ul class="checklist" style="margin-top:0">
+              <li>Tools work and every tool explains its method in its own words</li>
+              <li>About, Contact, Privacy Policy, Terms &amp; Disclaimer are live</li>
+              <li class="todo">Site is on your own domain with https</li>
+              <li class="todo">Homepage is indexed in Search Console</li>
+              <li class="todo">Sitemap submitted and showing “Success”</li>
+              <li class="todo">At least a few weeks of real, organic search traffic</li>
+              <li class="todo">Supporting blogs publishing 1–2 times a week (four are below; more follow through the Days 46–75 content phase)</li>
+            </ul>
+            <p>Apply from your own Google account only when these are true. Approval is Google's decision and can take days to weeks, and the first payment threshold is $100 — so applying early, before indexing and traffic, only wastes the review.</p>
+          </div>
+
+          <div class="setup-card">
+            <h3>Common mistakes to avoid</h3>
+            <ul>
+              <li>Applying for AdSense on a free subdomain or before the site is indexed.</li>
+              <li>Copying blog content from other sites — supporting posts must be original, like the two below.</li>
+              <li>Clicking your own ads later, or asking friends to — that gets accounts closed.</li>
+              <li>Publishing 10 thin posts in one day instead of 1–2 useful posts a week.</li>
+              <li>Changing the domain after applying — finish Steps 1–4 on the final domain first.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: First two blogs -->
+      <section class="section" id="blog">
+        <h2>Blog — supporting posts</h2>
+        <p>Original posts written for this site's tools, as the plan requires: each one answers a real student question, shows the working by hand, and links back to the tool that does it instantly. The first two were published in the Days 31–45 phase; the Percentage and Age posts below are new in the Days 46–75 content phase — and 1–2 new posts a week continue from here.</p>
+
+        <div class="blog-grid">
+          <a class="blog-card" href="#post-word-limit">
+            <span class="meta">Blog 1 · Writing · 30 Oct 2026 · 4 min read</span>
+            <h3>How to stay inside your essay word limit — without cutting your best ideas</h3>
+            <p>Why essays run over, the cut-in-the-right-order method, and how to use reading time to judge length before you submit.</p>
+            <span class="read">Read the post ↓</span>
+          </a>
+          <a class="blog-card" href="#post-gpa-cgpa">
+            <span class="meta">Blog 2 · Results · 30 Oct 2026 · 5 min read</span>
+            <h3>GPA, CGPA and percentage: how the conversions actually work</h3>
+            <p>The 4.0 scale, credit weighting, and the × 9.5 rule — worked step by step, including where the conversion can mislead you.</p>
+            <span class="read">Read the post ↓</span>
+          </a>
+          <a class="blog-card" href="#post-percentage">
+            <span class="meta">Blog 3 · Marks &amp; everyday maths · 30 Oct 2026 · 5 min read</span>
+            <h3>Percentage problems, solved properly: marks, discounts and percentage change</h3>
+            <p>One formula, three question types — and the traps that cost marks: the wrong whole, percentage points vs percent, and the discount that doesn't reverse.</p>
+            <span class="read">Read the post ↓</span>
+          </a>
+          <a class="blog-card" href="#post-age">
+            <span class="meta">Blog 4 · Forms &amp; eligibility · 30 Oct 2026 · 5 min read</span>
+            <h3>Exact age, explained: how years, months and days are counted for forms and exam cut-offs</h3>
+            <p>Why “age as on” a cut-off date is not your age today, how the borrowing method works, and the rounding mistakes that make students wrongly eligible.</p>
+            <span class="read">Read the post ↓</span>
+          </a>
+        </div>
+
+        <article class="post" id="post-word-limit">
+          <div class="meta">Blog 1 · 30 October 2026 · Word Counter guide</div>
+          <h3>How to stay inside your essay word limit — without cutting your best ideas</h3>
+          <p>Almost every student has done it: the assignment says 800 words, the draft says 1,140, and the last evening disappears into deleting sentences at random. The essay that comes out is shorter, but it is also worse — because the cuts were panic cuts, not editing. Word limits are not there to punish you. They test whether you can choose what matters. Here is a calmer way to do it.</p>
+          <h4>First, know which kind of limit you have</h4>
+          <p>A <b>hard limit</b> (“800 words maximum, work over the limit will not be marked”) means anything above the number may simply be ignored. A <b>range</b> (“750–850 words”) gives you about 10% either way. A <b>target</b> (“about 800 words”) is guidance. The same draft needs different treatment for each one, so read the instruction before you cut a single line.</p>
+          <h4>Cut in this order — weakest material first</h4>
+          <ol>
+            <li><b>Repeated points.</b> If you made the same argument in the introduction and again in paragraph three, one of them goes. Repetition is the most common reason essays run long.</li>
+            <li><b>Long quotations.</b> A six-line quote usually makes a one-line point. Shorten it to the exact phrase you need and put the rest in your own words.</li>
+            <li><b>Throat-clearing openings.</b> Sentences like “In today's modern world of the twenty-first century…” say nothing. Deleting them loses no marks.</li>
+            <li><b>Extra examples.</b> Two examples prove a point as well as four. Keep the strongest two.</li>
+            <li><b>Wordy phrases.</b> “Due to the fact that” is “because”. “In order to” is “to”. A pass through your draft hunting phrases like these often saves 5–8% on its own.</li>
+          </ol>
+          <h4>Use reading time as a second opinion</h4>
+          <p>Word count is not the only measure of length. At an average reading speed of 200 words per minute, an 800-word essay takes about four minutes to read — and about six minutes to speak at presentation speed (130 words per minute). If your draft reads aloud for ten minutes when the slot is five, it is too long no matter what the word count says. Timing a read-through catches the dense, heavy paragraphs that a raw count misses.</p>
+          <h4>A simple workflow that works</h4>
+          <p>Write the first draft freely, without watching the count — stopping mid-argument to delete words breaks your thinking. Then paste the draft into the Word Counter, set the limit in the word-goal box, and see exactly how far over you are. Cut in the order above, checking the goal bar after each pass. Most drafts reach the limit in two or three passes, and what survives is the strongest version of the argument, not a random remainder.</p>
+          <div class="tool-cta"><p><b>Try it:</b> open the <a href="#tools" data-goto="word">Word Counter</a>, paste your draft, and set your limit in the word-goal box — the progress bar shows how much is left to cut.</p></div>
+        </article>
+
+        <article class="post" id="post-gpa-cgpa">
+          <div class="meta">Blog 2 · 30 October 2026 · GPA Calculator guide</div>
+          <h3>GPA, CGPA and percentage: how the conversions actually work</h3>
+          <p>Application season produces the same confusion every year: a result card shows a CGPA of 8.4, a form asks for a percentage, and a friend studying abroad talks about a 3.5 GPA as if it were the same thing. They are three different scales, and converting between them is simple — as long as you know which formula belongs to which scale, and where the shortcuts stop being exact.</p>
+          <h4>The 4.0 GPA scale, and why credits matter</h4>
+          <p>On the 4.0 scale, each letter grade carries points: A is 4.0, B is 3.0, C is 2.0, D is 1.0 and F is 0, with plus and minus steps in between (B+ is 3.3, A− is 3.7). Your GPA is not a plain average of those points. Each subject's points are multiplied by its <b>credit hours</b> first. A B in a 4-credit subject pulls your GPA down far more than a B in a 1-credit subject pulls it anywhere — the 4-credit grade counts four times as heavily. That is why two students with the same grades can finish with different GPAs.</p>
+          <p><b>Worked example:</b> Mathematics A (4.0 × 4 credits = 16 points), Science B+ (3.3 × 4 = 13.2), English A− (3.7 × 3 = 11.1), Social Studies B (3.0 × 3 = 9). Total points 49.3 ÷ 14 credits = <b>3.52 GPA</b>.</p>
+          <h4>CGPA to percentage: the × 9.5 rule</h4>
+          <p>Indian boards and many universities convert the 10-point CGPA to percentage with one formula: <b>Percentage = CGPA × 9.5</b>. So a CGPA of 8.4 becomes 8.4 × 9.5 = <b>79.8%</b>, and the reverse is just as direct: <b>CGPA = Percentage ÷ 9.5</b>, so 79.8% ÷ 9.5 = 8.4. The 9.5 factor exists because the board calibrated it against years of actual subject marks — it is an official approximation, not a mathematical identity.</p>
+          <h4>Where the conversion can mislead you</h4>
+          <ul>
+            <li><b>Not every institution uses × 9.5.</b> Some universities use × 10, some publish a conversion table, and some refuse conversion altogether. The figure on your form should use your institution's rule, not a general one.</li>
+            <li><b>GPA (4.0) and CGPA (10-point) are not interchangeable.</b> A 3.5 GPA is not “8.75 CGPA” by any official formula — the scales are built differently.</li>
+            <li><b>A converted percentage is an estimate.</b> Two students with the same CGPA can have genuinely different subject marks. For competitive cut-offs, the original CGPA is what counts.</li>
+          </ul>
+          <p>The safe habit: convert for your own planning freely, but before writing a converted figure on any official form, check the handbook or notice that the form itself points to. It takes two minutes and prevents the one error that can get an application rejected.</p>
+          <div class="tool-cta"><p><b>Try it:</b> the <a href="#tools" data-goto="gpa">GPA Calculator</a> weights your grades by credits automatically, and the converters underneath it do CGPA ⇄ percentage in both directions as you type. For a plain marks percentage, use the <a href="#tools" data-goto="percent">Percentage Calculator</a>.</p></div>
+        </article>
+
+        <article class="post" id="post-percentage">
+          <div class="meta">Blog 3 · 30 October 2026 · Percentage Calculator guide</div>
+          <h3>Percentage problems, solved properly: marks, discounts and percentage change</h3>
+          <p>Percentage is probably the most-used piece of maths in student life — result cards, attendance requirements, scholarship cut-offs, sale discounts, data-interpretation questions. Yet most percentage errors are not calculation errors. They are <b>whole errors</b>: dividing by the wrong total. Get the whole right, and every percentage question becomes the same one-line formula.</p>
+          <h4>The one rule: percent means “out of a hundred”</h4>
+          <p><b>Percentage = (part ÷ whole) × 100.</b> The whole is the total the part belongs to — the maximum marks, the original price, the starting value. In exam questions, the whole is usually the number that follows the word “of”, or the total the question started from. If you ever feel stuck, write down “part = ?” and “whole = ?” before touching the numbers; the formula then fills itself in.</p>
+          <h4>Type 1 · Marks percentage</h4>
+          <p>Scored 450 out of 500? Percentage = 450 ÷ 500 × 100 = <b>90%</b>. The same method works backwards. Need 60% to pass a paper of 80 marks? Required marks = 60 ÷ 100 × 80 = <b>48 marks</b>. And to plan a target: if an exam totals 600 marks and you want 75%, you need 0.75 × 600 = <b>450 marks overall</b> — which tells you exactly how much room each remaining paper has.</p>
+          <h4>Type 2 · Percent of a number</h4>
+          <p>“What is 15% of 2,400?” is part-hunting: 15 ÷ 100 × 2,400 = <b>360</b>. Discounts are this type in disguise. A 20% discount on ₹850 removes 0.20 × 850 = ₹170, so you pay 850 − 170 = <b>₹680</b>. A useful mental shortcut: find 10% first (just move the decimal point one place left), then build — 15% is 10% + 5%, and 5% is half of 10%.</p>
+          <h4>Type 3 · Percentage change — and the percentage-points trap</h4>
+          <p>Percentage change compares a movement against the <b>original</b> value: (new − old) ÷ old × 100. Marks rising from 60 to 75 is (75 − 60) ÷ 60 × 100 = a <b>25% increase</b> — not 15%. This is where the most common confusion in news and results lives:</p>
+          <ul>
+            <li>If your score goes from 60% to 75%, that is <b>15 percentage points</b> more, but a <b>25% improvement</b> relative to where you started. Both statements are true; they measure different things.</li>
+            <li>Always divide by the <b>old</b> value for change. Dividing by the new value is the single most frequent percentage-change mistake in exams.</li>
+            <li>Percentages of different wholes cannot be added. 50% of a class of 20 and 50% of a class of 60 are not “100%” of anything.</li>
+            <li>A fall and an equal rise do not cancel out. ₹100 with 20% off becomes ₹80; adding 20% back gives ₹96, not ₹100 — because the second 20% was taken of a smaller whole.</li>
+          </ul>
+          <h4>Attendance: the percentage question nobody escapes</h4>
+          <p>Most colleges require 75% attendance. If a subject holds 60 classes, you must attend at least 0.75 × 60 = <b>45 classes</b> — so you can miss at most 15. Check this early in the term, not in the last week: the classes you have already missed are gone, and every remaining class becomes a larger share of the whole you still control.</p>
+          <div class="tool-cta"><p><b>Try it:</b> the <a href="#tools" data-goto="percent">Percentage Calculator</a> has all three types side by side — marks percentage, percent of a number, and percentage change — each updating as you type, with the formula shown under every result so you can check it by hand.</p></div>
+        </article>
+
+        <article class="post" id="post-age">
+          <div class="meta">Blog 4 · 30 October 2026 · Age Calculator guide</div>
+          <h3>Exact age, explained: how years, months and days are counted for forms and exam cut-offs</h3>
+          <p>“I am 17” is good enough for a birthday cake. It is not good enough for an application form. Competitive exams, government jobs, school admissions and sports trials all fix eligibility by <b>exact age on a specific cut-off date</b> — and every year, candidates who were sure they qualified discover they were a few weeks too old, or a few days too young. Exact age is a small calculation with strict rules. Here is how it actually works.</p>
+          <h4>The counting method: completed years, then months, then days</h4>
+          <p>Age counts only what you have <b>completed</b>. You are 17 from your 17th birthday until the day before your 18th — “almost 18” is still 17 on every official form. The standard method, the one used on forms and by the calculator on this page, is:</p>
+          <ol>
+            <li>Count the <b>completed years</b> between the date of birth and the “as on” date.</li>
+            <li>From the last birthday, count the <b>completed months</b>.</li>
+            <li>Count the <b>remaining days</b> after the last completed month.</li>
+          </ol>
+          <p><b>Worked example:</b> date of birth 15 August 2009, age as on 1 January 2027. Completed years: 15 Aug 2009 → 15 Aug 2026 = <b>17 years</b>. Completed months: 15 Aug → 15 Dec 2026 = <b>4 months</b>. Remaining days: 15 Dec → 1 Jan = <b>17 days</b>. Exact age: <b>17 years, 4 months, 17 days</b>.</p>
+          <h4>Why the days sometimes “borrow” a month</h4>
+          <p>When the “as on” day-of-month is smaller than the birth day-of-month (the 1st versus the 15th above), the subtraction borrows the days of the month just before the “as on” date. That is why the answer depends on real calendar months — 31 days in December, 30 in others, 28 or 29 in February — and why the shortcut of dividing total days by 365 gives a number that is close but often wrong by days or weeks. For an eligibility cut-off, “close” can mean rejected.</p>
+          <h4>Cut-off dates: the part most students misread</h4>
+          <ul>
+            <li><b>“Age as on 1 January” (or 1 August, or another fixed date)</b> means your age is frozen on that date — not your age today, and not your age on the exam day. Always calculate against the cut-off date named in the notification.</li>
+            <li><b>Both ends matter.</b> Many posts set a minimum <i>and</i> a maximum age. Being one day over the maximum on the cut-off date disqualifies, exactly as being one day under the minimum does.</li>
+            <li><b>Born on 29 February?</b> In non-leap years, different authorities treat the birthday differently (28 February or 1 March). If a cut-off falls near that date, follow the rule in the exam notification itself rather than assuming.</li>
+            <li><b>Never round.</b> Writing 18 when you are 17 years and 11 months is a wrong entry on a signed form, not a harmless approximation.</li>
+          </ul>
+          <p>The safe habit takes under a minute: find the cut-off date in the official notification, set it as the “as of” date, and read off the years-months-days figure. Do it before you pay any application fee.</p>
+          <div class="tool-cta"><p><b>Try it:</b> open the <a href="#tools" data-goto="age">Age Calculator</a>, enter your date of birth, and set <b>Age as of</b> to the cut-off date from your exam or admission notice — the years, months and days shown are the exact figure the form is asking for, along with your total days lived and the weekday you were born.</p></div>
+        </article>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section faq" id="faq">
+        <h2>Frequently asked questions</h2>
+        <details>
+          <summary>Are these tools really free?</summary>
+          <p>Yes. Every tool on this page is free to use, with no account, no download and no usage limit.</p>
+        </details>
+        <details>
+          <summary>Is my essay text or personal data saved anywhere?</summary>
+          <p>No. All calculations happen on your own device, inside this page. Your text, grades and dates are never sent to a server, and nothing is stored after you close the tab.</p>
+        </details>
+        <details>
+          <summary>Which GPA scale does the calculator use?</summary>
+          <p>The standard 4.0 scale (A = 4.0 down to F = 0), weighted by credit hours. The separate converters handle the 10-point CGPA system used by Indian universities, using the widely published × 9.5 formula.</p>
+        </details>
+        <details>
+          <summary>Can I rely on the CGPA-to-percentage conversion officially?</summary>
+          <p>It's an estimate based on the formula CBSE and many universities publish. Some institutions use a different formula or a conversion table, so for an official application, confirm the rule in your university's handbook.</p>
+        </details>
+        <details>
+          <summary>Do the tools work on a phone?</summary>
+          <p>Yes — the page is designed to work on phones, tablets and computers, and every tool works the same way on all of them.</p>
+        </details>
+        <details>
+          <summary>When should this site apply for Google AdSense?</summary>
+          <p>Not yet. The site is in the Days 46–75 content phase of its 90-day plan, and as the warning in the <a href="#progress">progress tracker</a> states, it must not apply yet: the domain padhaipartner.dpdns.org is registered, but the site is not yet live on it, there is no indexing, and no steady organic traffic. The application belongs in the Days 76–90 review phase, and only if that review shows the site's own domain live with https, the homepage indexed in Search Console, and a few weeks of real organic traffic, with supporting blogs publishing regularly.</p>
+        </details>
+        <details>
+          <summary>How often will new blog posts appear?</summary>
+          <p>The plan is 1–2 original posts per week, each supporting one of the tools. Four are published so far — on essay word limits, GPA / CGPA conversion, percentages, and exact age — in the <a href="#blog">Blog section</a> above.</p>
+        </details>
+      </section>
+
+      <!-- Contact -->
+      <section class="section" id="contact">
+        <h2>Contact</h2>
+        <p>Spotted a wrong formula, a broken tool, or a result that doesn't match your textbook? Draft your message below and copy it — then send it to the site owner by email or message, and it will be checked against the method notes under each tool.</p>
+        <div class="subbox" style="max-width:640px">
+          <label class="flabel" for="ct-topic">Topic</label>
+          <select class="field" id="ct-topic" style="margin-bottom:12px">
+            <option>Wrong result / formula</option>
+            <option>Tool not working</option>
+            <option>Suggest a new tool</option>
+            <option>Something else</option>
+          </select>
+          <label class="flabel" for="ct-msg">Your message</label>
+          <textarea class="field" id="ct-msg" style="min-height:110px" placeholder="Which tool, what you entered, and what result you expected…"></textarea>
+          <div class="btnrow">
+            <button class="btn primary" id="ct-copy" type="button">Copy message</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Policies -->
+      <section class="section">
+        <div class="policy-grid">
+          <div class="policy" id="privacy">
+            <h3>Privacy Policy</h3>
+            <p><i>Last updated: 30 October 2026</i></p>
+            <ul>
+              <li>We do not collect, store or transmit anything you type into the tools. All processing happens locally in your browser.</li>
+              <li>We do not ask for accounts, names, email addresses or payment details.</li>
+              <li>If advertising is shown on this site in the future, ad providers such as Google AdSense may use cookies to serve ads based on your visits to this and other websites. You can opt out of personalised advertising in your Google Ads Settings.</li>
+              <li>This page does not set tracking cookies of its own.</li>
+            </ul>
+          </div>
+          <div class="policy" id="terms">
+            <h3>Terms of Use &amp; Disclaimer</h3>
+            <ul>
+              <li>The tools are provided free of charge, “as is”, for personal and educational use.</li>
+              <li>Results are estimates for guidance only. GPA, CGPA conversion and age figures should be verified against your institution's or the relevant authority's official method before being used in any application.</li>
+              <li>We are not responsible for decisions taken solely on the basis of these calculations.</li>
+              <li>Content on this page may be updated or corrected at any time without notice.</li>
+            </ul>
+            <p>Every tool explains its own method in the notes beneath it, so you can check any result by hand before relying on it.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <a href="#tools">Tools</a>
+        <a href="#about">About</a>
+        <a href="#progress">Progress</a>
+        <a href="#setup">Setup Guide</a>
+        <a href="#blog">Blog</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+        <a href="#privacy">Privacy Policy</a>
+        <a href="#terms">Terms &amp; Disclaimer</a>
+        <span class="fine">© 2026 PadhaiPartner · padhaipartner.dpdns.org. Free for students — no sign-up, and your data stays in your browser.</span>
+      </div>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      (function(){
+        "use strict";
+        var $ = function(id){ return document.getElementById(id); };
+        var toastTimer = null;
+        function toast(msg){
+          var t = $("toast"); t.textContent = msg; t.classList.add("show");
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+        }
+        function fmt(n){ return n.toLocaleString("en-IN"); }
+
+        /* ---------- Tool switching ---------- */
+        var picks = Array.prototype.slice.call(document.querySelectorAll(".pick"));
+        function showTool(name){
+          picks.forEach(function(p){ p.setAttribute("aria-selected", p.getAttribute("data-tool") === name ? "true" : "false"); });
+          ["word","gpa","percent","age","timer"].forEach(function(k){
+            $("panel-" + k).hidden = (k !== name);
+          });
+        }
+        picks.forEach(function(p){
+          p.addEventListener("click", function(){
+            showTool(p.getAttribute("data-tool"));
+            $("tools").scrollIntoView({behavior:"smooth", block:"start"});
+          });
+        });
+        Array.prototype.slice.call(document.querySelectorAll("[data-goto]")).forEach(function(a){
+          a.addEventListener("click", function(){ showTool(a.getAttribute("data-goto")); });
+        });
+
+        /* ---------- Word Counter ---------- */
+        var wcText = $("wc-text"), wcGoal = $("wc-goal");
+        var STOP = {the:1,a:1,an:1,and:1,or:1,of:1,to:1,in:1,is:1,are:1,was:1,were:1,it:1,its:1,that:1,this:1,for:1,on:1,with:1,as:1,by:1,at:1,from:1,be:1,has:1,have:1,had:1,not:1,but:1,they:1,you:1,we:1,i:1,he:1,she:1,his:1,her:1,their:1,our:1,your:1,my:1,me:1,him:1,them:1,us:1,can:1,will:1,than:1,then:1,so:1,if:1,when:1,which:1,who:1,what:1,all:1,also:1,into:1,about:1,there:1,these:1,those:1,an:1};
+        function timeStr(words, wpm){
+          if(!words) return "0 sec";
+          var sec = Math.ceil(words / wpm * 60);
+          if(sec < 60) return sec + " sec";
+          var m = Math.floor(sec/60), s = sec % 60;
+          return s ? m + "m " + s + "s" : m + " min";
+        }
+        function updateWord(){
+          var text = wcText.value;
+          var wordsArr = text.match(/[A-Za-z0-9À-ÖØ-öø-ÿ'’-]+/g) || [];
+          var words = text.trim() ? wordsArr.length : 0;
+          var chars = text.length;
+          var noSpaces = text.replace(/\s/g,"").length;
+          var sentences = 0;
+          if(text.trim()){
+            var parts = text.split(/[.!?]+/).filter(function(s){ return s.trim().length; });
+            sentences = parts.length;
+          }
+          var paras = text.trim() ? text.split(/\n\s*\n/).filter(function(s){ return s.trim().length; }).length : 0;
+          $("wc-words").textContent = fmt(words);
+          $("wc-chars").textContent = fmt(chars);
+          $("wc-nospaces").textContent = fmt(noSpaces);
+          $("wc-sentences").textContent = fmt(sentences);
+          $("wc-paras").textContent = fmt(paras);
+          $("wc-read").textContent = timeStr(words, 200);
+          $("wc-speak").textContent = timeStr(words, 130);
+          $("wc-avg").textContent = sentences ? (words/sentences).toFixed(1) : "0";
+
+          var goal = parseInt(wcGoal.value, 10);
+          if(goal > 0){
+            var pctDone = Math.min(100, Math.round(words/goal*100));
+            $("wc-progress").style.width = pctDone + "%";
+            $("wc-goaltext").innerHTML = words >= goal
+              ? "<b>" + fmt(words) + " / " + fmt(goal) + " words — goal reached.</b>"
+              : "<b>" + fmt(words) + " / " + fmt(goal) + " words</b> — " + fmt(goal-words) + " to go (" + pctDone + "%)";
+          } else {
+            $("wc-progress").style.width = "0%";
+            $("wc-goaltext").textContent = "Set a goal to track your progress.";
+          }
+
+          var freqEl = $("wc-freq");
+          if(words < 3){ freqEl.textContent = "Your most repeated words will appear here."; }
+          else {
+            var counts = {};
+            wordsArr.forEach(function(w){
+              var k = w.toLowerCase().replace(/^['’-]+|['’-]+$/g,"");
+              if(k.length < 3 || STOP[k]) return;
+              counts[k] = (counts[k]||0) + 1;
+            });
+            var top = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a]; }).slice(0,3).filter(function(k){ return counts[k] > 1; });
+            if(!top.length){ freqEl.textContent = "No word repeats yet — your vocabulary is well spread."; }
+            else {
+              freqEl.innerHTML = "Most repeated: " + top.map(function(k){
+                return '<span class="chip">' + k.replace(/</g,"&lt;") + " × " + counts[k] + "</span>";
+              }).join(" ");
+            }
+          }
+        }
+        wcText.addEventListener("input", updateWord);
+        wcGoal.addEventListener("input", updateWord);
+        $("wc-clear").addEventListener("click", function(){ wcText.value = ""; updateWord(); wcText.focus(); });
+        $("wc-copy").addEventListener("click", function(){
+          if(!wcText.value){ toast("Nothing to copy yet"); return; }
+          function done(){ toast("Text copied"); }
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(wcText.value).then(done, function(){ fallback(); });
+          } else fallback();
+          function fallback(){
+            wcText.select();
+            try { document.execCommand("copy"); done(); }
+            catch(e){ toast("Copy failed — select the text manually"); }
+          }
+        });
+        updateWord();
+
+        /* ---------- GPA Calculator ---------- */
+        var GRADE_POINTS = [["A+",4.0],["A",4.0],["A-",3.7],["B+",3.3],["B",3.0],["B-",2.7],["C+",2.3],["C",2.0],["C-",1.7],["D+",1.3],["D",1.0],["F",0.0]];
+        var gpaRows = $("gpa-rows");
+        function gradeOptions(sel){
+          return GRADE_POINTS.map(function(g){
+            return '<option value="' + g[1] + '"' + (g[0]===sel ? " selected" : "") + ">" + g[0] + " (" + g[1].toFixed(1) + ")</option>";
+          }).join("");
+        }
+        function addRow(name, grade, credits){
+          var row = document.createElement("div");
+          row.className = "gpa-row";
+          row.innerHTML =
+            '<input class="field f-name" type="text" placeholder="Subject name" value="' + (name||"") + '" aria-label="Subject name" />' +
+            '<select class="field f-grade" aria-label="Grade">' + gradeOptions(grade || "A") + "</select>" +
+            '<input class="field f-credits" type="number" min="0" step="0.5" value="' + (credits != null ? credits : 3) + '" aria-label="Credits" />' +
+            '<button type="button" class="del" aria-label="Remove subject">×</button>';
+          row.querySelector(".del").addEventListener("click", function(){
+            row.remove();
+            if(!gpaRows.children.length) addRow();
+            updateGPA();
+          });
+          row.querySelectorAll("input,select").forEach(function(el){ el.addEventListener("input", updateGPA); });
+          gpaRows.appendChild(row);
+        }
+        function letterFor(gpa){
+          if(gpa >= 3.85) return "A";
+          if(gpa >= 3.5) return "A− / B+ range";
+          if(gpa >= 3.0) return "B range";
+          if(gpa >= 2.5) return "B− / C+ range";
+          if(gpa >= 2.0) return "C range";
+          if(gpa >= 1.0) return "D range";
+          if(gpa > 0) return "Below D";
+          return "—";
+        }
+        function updateGPA(){
+          var points = 0, credits = 0;
+          Array.prototype.slice.call(gpaRows.children).forEach(function(row){
+            var g = parseFloat(row.querySelector(".f-grade").value);
+            var c = parseFloat(row.querySelector(".f-credits").value);
+            if(isNaN(c) || c <= 0) return;
+            points += g * c; credits += c;
+          });
+          var gpa = credits ? points/credits : 0;
+          $("gpa-score").textContent = gpa.toFixed(2);
+          $("gpa-letter").textContent = credits ? letterFor(gpa) : "—";
+          $("gpa-credits").textContent = fmt(credits);
+          $("gpa-points").textContent = points.toFixed(1);
+        }
+        $("gpa-add").addEventListener("click", function(){ addRow(); updateGPA(); });
+        $("gpa-reset").addEventListener("click", function(){
+          gpaRows.innerHTML = ""; seedGPA(); updateGPA();
+        });
+        function seedGPA(){
+          addRow("Mathematics","A",4); addRow("Science","B+",4); addRow("English","A-",3); addRow("Social Studies","B",3);
+        }
+        seedGPA(); updateGPA();
+
+        $("cgpa-in").addEventListener("input", function(){
+          var v = parseFloat(this.value);
+          var out = $("cgpa-out");
+          if(isNaN(v) || v < 0 || v > 10){ out.innerHTML = "—<small>Enter a CGPA between 0 and 10</small>"; return; }
+          out.innerHTML = (v*9.5).toFixed(2) + "%<small>Estimated percentage (" + v + " × 9.5)</small>";
+        });
+        $("pct-in").addEventListener("input", function(){
+          var v = parseFloat(this.value);
+          var out = $("pct-out");
+          if(isNaN(v) || v < 0 || v > 100){ out.innerHTML = "—<small>Enter a percentage between 0 and 100</small>"; return; }
+          out.innerHTML = (v/9.5).toFixed(2) + "<small>Estimated CGPA (" + v + " ÷ 9.5)</small>";
+        });
+
+        /* ---------- Percentage ---------- */
+        function bindPct(ids, fn){
+          ids.forEach(function(id){ $(id).addEventListener("input", fn); });
+          fn();
+        }
+        function num(id){ var v = parseFloat($(id).value); return isNaN(v) ? null : v; }
+        bindPct(["pc-scored","pc-total"], function(){
+          var s = num("pc-scored"), t = num("pc-total"), out = $("pc-marks-out");
+          if(s === null || t === null || t <= 0){ out.innerHTML = "—<small>scored ÷ total × 100</small>"; return; }
+          var p = s/t*100;
+          out.innerHTML = p.toFixed(2) + "%<small>" + fmt(s) + " out of " + fmt(t) + "</small>";
+        });
+        bindPct(["pc-pct","pc-of"], function(){
+          var p = num("pc-pct"), n = num("pc-of"), out = $("pc-of-out");
+          if(p === null || n === null){ out.innerHTML = "—<small>percent ÷ 100 × number</small>"; return; }
+          out.innerHTML = fmt(Math.round(p/100*n*100)/100) + "<small>" + p + "% of " + fmt(n) + "</small>";
+        });
+        bindPct(["pc-old","pc-new"], function(){
+          var o = num("pc-old"), n = num("pc-new"), out = $("pc-change-out");
+          if(o === null || n === null || o === 0){ out.innerHTML = "—<small>(new − old) ÷ old × 100</small>"; return; }
+          var c = (n-o)/Math.abs(o)*100;
+          var word = c > 0 ? "increase" : (c < 0 ? "decrease" : "no change");
+          out.innerHTML = Math.abs(c).toFixed(2) + "% " + word + "<small>From " + fmt(o) + " to " + fmt(n) + "</small>";
+        });
+
+        /* ---------- Age ---------- */
+        var dobEl = $("age-dob"), asofEl = $("age-asof");
+        function isoToday(){
+          var d = new Date();
+          var m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0");
+          return d.getFullYear() + "-" + m + "-" + day;
+        }
+        asofEl.value = isoToday();
+        function parseDate(v){
+          if(!v) return null;
+          var p = v.split("-");
+          return new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
+        }
+        function updateAge(){
+          var err = $("age-error");
+          var dob = parseDate(dobEl.value), asof = parseDate(asofEl.value);
+          function blank(){
+            ["age-years","age-months","age-days","age-total","age-weeks","age-next","age-weekday","age-turns"].forEach(function(id){ $(id).textContent = "–"; });
+          }
+          if(!dob || !asof){ err.textContent = dob ? "" : "Pick your date of birth to see your exact age."; blank(); return; }
+          if(dob > asof){ err.textContent = "Date of birth is after the “as of” date — check the dates."; blank(); return; }
+          err.textContent = "";
+          var y = asof.getFullYear() - dob.getFullYear();
+          var m = asof.getMonth() - dob.getMonth();
+          var d = asof.getDate() - dob.getDate();
+          if(d < 0){
+            m -= 1;
+            var prevMonthDays = new Date(asof.getFullYear(), asof.getMonth(), 0).getDate();
+            d += prevMonthDays;
+          }
+          if(m < 0){ y -= 1; m += 12; }
+          var totalDays = Math.floor((asof - dob) / 86400000);
+          var next = new Date(asof.getFullYear(), dob.getMonth(), dob.getDate());
+          if(next < asof) next.setFullYear(asof.getFullYear() + 1);
+          if(next.getTime() === asof.getTime()){ /* birthday today */ }
+          var daysToNext = Math.round((next - asof) / 86400000);
+          var turnsAge = next.getFullYear() - dob.getFullYear();
+          var weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+          $("age-years").textContent = fmt(y);
+          $("age-months").textContent = fmt(m);
+          $("age-days").textContent = fmt(d);
+          $("age-total").textContent = fmt(totalDays);
+          $("age-weeks").textContent = fmt(Math.floor(totalDays/7));
+          $("age-next").textContent = daysToNext === 0 ? "Today!" : fmt(daysToNext);
+          $("age-weekday").textContent = weekdays[dob.getDay()];
+          $("age-turns").textContent = fmt(turnsAge);
+        }
+        dobEl.addEventListener("input", updateAge);
+        asofEl.addEventListener("input", updateAge);
+        updateAge();
+
+        /* ---------- Focus Timer ---------- */
+        var CIRC = 603.2;
+        var tm = { mode:"focus", total:25*60, remaining:25*60, running:false, endAt:0, int:null, done:0 };
+        var clockEl = $("tm-clock"), ringEl = $("tm-ring"), modeEl = $("tm-mode"), toggleBtn = $("tm-toggle");
+        function renderTimer(){
+          var m = Math.floor(tm.remaining/60), s = tm.remaining % 60;
+          clockEl.textContent = String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+          var frac = tm.total ? tm.remaining/tm.total : 0;
+          ringEl.style.strokeDashoffset = String(CIRC * (1 - frac));
+          modeEl.textContent = tm.mode === "focus" ? "Focus" : "Break";
+          $("tm-focus-btn").setAttribute("aria-pressed", tm.mode === "focus" ? "true" : "false");
+          $("tm-break-btn").setAttribute("aria-pressed", tm.mode === "break" ? "true" : "false");
+          toggleBtn.textContent = tm.running ? "Pause" : (tm.remaining < tm.total ? "Resume" : "Start");
+          document.title = tm.running
+            ? clockEl.textContent + " · " + modeEl.textContent + " — PadhaiPartner"
+            : "PadhaiPartner — Word Counter, GPA, Percentage, Age & Focus Timer";
+        }
+        function beep(){
+          try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if(!AC) return;
+            var ctx = new AC();
+            [0, 0.35, 0.7].forEach(function(t){
+              var o = ctx.createOscillator(), g = ctx.createGain();
+              o.frequency.value = 880; o.type = "sine";
+              g.gain.setValueAtTime(0.0001, ctx.currentTime + t);
+              g.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + t + 0.03);
+              g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.3);
+              o.connect(g); g.connect(ctx.destination);
+              o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.32);
+            });
+          } catch(e){ /* sound is a bonus; timer still works silently */ }
+        }
+        function stopInt(){ if(tm.int){ clearInterval(tm.int); tm.int = null; } }
+        function finish(){
+          stopInt(); tm.running = false; tm.remaining = 0;
+          beep();
+          if(tm.mode === "focus"){
+            tm.done += 1; $("tm-done").textContent = tm.done;
+            toast("Focus session complete — take a break");
+            setMode("break", 5);
+          } else {
+            toast("Break over — ready for the next session?");
+            setMode("focus", 25);
+          }
+          renderTimer();
+        }
+        function tick(){
+          var left = Math.round((tm.endAt - Date.now())/1000);
+          if(left <= 0){ finish(); return; }
+          tm.remaining = left; renderTimer();
+        }
+        function setMode(mode, mins){
+          stopInt(); tm.running = false; tm.mode = mode;
+          tm.total = mins*60; tm.remaining = tm.total;
+          document.querySelectorAll("[data-mins]").forEach(function(b){
+            b.setAttribute("aria-pressed", parseInt(b.getAttribute("data-mins"),10) === mins ? "true" : "false");
+          });
+          renderTimer();
+        }
+        toggleBtn.addEventListener("click", function(){
+          if(tm.running){
+            stopInt(); tm.running = false;
+            tm.remaining = Math.max(0, Math.round((tm.endAt - Date.now())/1000));
+          } else {
+            if(tm.remaining <= 0) tm.remaining = tm.total;
+            tm.endAt = Date.now() + tm.remaining*1000;
+            tm.int = setInterval(tick, 250);
+            tm.running = true;
+          }
+          renderTimer();
+        });
+        $("tm-reset").addEventListener("click", function(){
+          stopInt(); tm.running = false; tm.remaining = tm.total; renderTimer();
+        });
+        $("tm-focus-btn").addEventListener("click", function(){ setMode("focus", 25); });
+        $("tm-break-btn").addEventListener("click", function(){ setMode("break", 5); });
+        document.querySelectorAll("[data-mins]").forEach(function(b){
+          b.addEventListener("click", function(){
+            $("tm-custom").value = "";
+            setMode(tm.mode, parseInt(b.getAttribute("data-mins"),10));
+          });
+        });
+        $("tm-custom").addEventListener("input", function(){
+          var v = parseInt(this.value, 10);
+          if(!isNaN(v) && v >= 1 && v <= 180){
+            document.querySelectorAll("[data-mins]").forEach(function(b){ b.setAttribute("aria-pressed","false"); });
+            stopInt(); tm.running = false; tm.total = v*60; tm.remaining = tm.total; renderTimer();
+          }
+        });
+        renderTimer();
+
+        /* ---------- Setup guide files ---------- */
+        function copyText(text, okMsg){
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(text).then(function(){ toast(okMsg); }, function(){ toast("Copy failed — select the text manually"); });
+          } else { toast("Copy not available — select the text manually"); }
+        }
+        function downloadFile(name, text, type){
+          var blob = new Blob([text], {type: type || "text/plain;charset=utf-8"});
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url; a.download = name;
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function(){ URL.revokeObjectURL(url); }, 800);
+          toast(name + " downloaded — for use on padhaipartner.dpdns.org");
+        }
+        var robotsText = "User-agent: *\nAllow: /\n\nSitemap: https://padhaipartner.dpdns.org/sitemap.xml\n";
+        var sitemapText = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://padhaipartner.dpdns.org/</loc></url>\n  <url><loc>https://padhaipartner.dpdns.org/#about</loc></url>\n  <url><loc>https://padhaipartner.dpdns.org/#progress</loc></url>\n  <url><loc>https://padhaipartner.dpdns.org/#setup</loc></url>\n  <url><loc>https://padhaipartner.dpdns.org/#blog</loc></url>\n  <url><loc>https://padhaipartner.dpdns.org/#privacy</loc></url>\n  <url><loc>https://padhaipartner.dpdns.org/#terms</loc></url>\n</urlset>\n';
+        var cr = $("copy-robots"); if(cr) cr.addEventListener("click", function(){ copyText(robotsText, "robots.txt copied"); });
+        var dr = $("dl-robots"); if(dr) dr.addEventListener("click", function(){ downloadFile("robots.txt", robotsText); });
+        var ds = $("dl-sitemap"); if(ds) ds.addEventListener("click", function(){ downloadFile("sitemap.xml", sitemapText, "application/xml;charset=utf-8"); });
+
+        /* ---------- Contact composer ---------- */
+        $("ct-copy").addEventListener("click", function(){
+          var msg = $("ct-msg").value.trim();
+          if(!msg){ toast("Write a message first"); return; }
+          var full = "Topic: " + $("ct-topic").value + "\n\n" + msg;
+          function done(){ toast("Message copied — paste it into your email or chat"); }
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(full).then(done, function(){ toast("Copy failed — select the text manually"); });
+          } else {
+            $("ct-msg").select();
+            try { document.execCommand("copy"); done(); }
+            catch(e){ toast("Copy failed — select the text manually"); }
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
